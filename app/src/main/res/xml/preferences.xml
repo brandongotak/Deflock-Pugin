@@ -14,4 +14,9 @@
         android:summary="@string/pref_show_labels_summary"
         android:defaultValue="false" />
 
+    <com.atakmap.android.gui.PanPreference
+        android:key="pref_check_update"
+        android:title="@string/pref_check_update_title"
+        android:summary="@string/pref_check_update_summary" />
+
 </PreferenceScreen>

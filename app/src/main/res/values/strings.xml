@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Deflock</string>
     <string name="app_desc">ALPR camera locations on the map</string>
-    <string name="version_label">v1.0.0</string>
+    <string name="version_label">v1.2.0</string>
 
     <string name="preferences_title">Deflock Settings</string>
     <string name="preferences_summary">Configure Deflock ALPR plugin</string>
@@ -10,4 +10,6 @@
     <string name="pref_max_radius_summary">Limit how large an area to query (default 20 km)</string>
     <string name="pref_show_labels_title">Show Labels on Map</string>
     <string name="pref_show_labels_summary">Display camera operator names on map markers</string>
+    <string name="pref_check_update_title">Check for Update</string>
+    <string name="pref_check_update_summary">Check GitHub for a newer Deflock plugin and install it</string>
 </resources>
