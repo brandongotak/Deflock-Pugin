@@ -46,8 +46,17 @@ public final class DeflockPluginUpdater {
     private DeflockPluginUpdater() {
     }
 
-    /** Query GitHub for the latest release and, if newer, offer to install it. */
-    public static void checkForUpdate(final Context pluginContext) {
+    /**
+     * Query GitHub for the latest release and, if newer, offer to install it.
+     *
+     * @param pluginContext plugin context, used for resources and toasts.
+     * @param uiContext     the Activity currently in front, which the dialog attaches
+     *                      to. Callers must pass the activity they were invoked from —
+     *                      a dialog built on a backgrounded activity's context shows
+     *                      up behind it, with no error. Null falls back to the MapView
+     *                      activity, which is only correct from the map screen.
+     */
+    public static void checkForUpdate(final Context pluginContext, final Context uiContext) {
         Toast.makeText(pluginContext, "Checking for updates…", Toast.LENGTH_SHORT).show();
         new Thread(() -> {
             String latestVersion = null;
@@ -90,8 +99,15 @@ public final class DeflockPluginUpdater {
             final String fDownloadUrl = downloadUrl;
             final String fError = error;
             new Handler(Looper.getMainLooper()).post(
-                    () -> onUpdateCheckResult(pluginContext, fLatestVersion, fDownloadUrl, fError));
+                    () -> onUpdateCheckResult(pluginContext, uiContext, fLatestVersion, fDownloadUrl, fError));
         }, "Deflock-UpdateCheck").start();
+    }
+
+    /** The activity to attach dialogs to: the caller's, else the map's, else the plugin's. */
+    private static Context resolveUiContext(Context uiContext, Context pluginContext) {
+        if (uiContext != null) return uiContext;
+        MapView mv = MapView.getMapView();
+        return mv != null ? mv.getContext() : pluginContext;
     }
 
     /** Pick the first asset whose name ends in .apk. */
@@ -140,8 +156,8 @@ public final class DeflockPluginUpdater {
         }
     }
 
-    private static void onUpdateCheckResult(Context pluginContext, String latestVersion,
-            String downloadUrl, String error) {
+    private static void onUpdateCheckResult(Context pluginContext, Context uiContext,
+            String latestVersion, String downloadUrl, String error) {
         String installed = BuildConfig.PLUGIN_VERSION;
         if (error != null || latestVersion == null || latestVersion.isEmpty()) {
             Toast.makeText(pluginContext,
@@ -150,18 +166,24 @@ public final class DeflockPluginUpdater {
             return;
         }
         if (compareVersions(latestVersion, installed) > 0) {
-            Context ctx = MapView.getMapView() != null ? MapView.getMapView().getContext() : pluginContext;
+            Context ctx = resolveUiContext(uiContext, pluginContext);
             final String url = downloadUrl;
             try {
                 new AlertDialog.Builder(ctx)
                         .setTitle("Update available")
                         .setMessage("A newer Deflock plugin is available.\n\nLatest: " + latestVersion
                                 + "\nInstalled: " + installed)
-                        .setPositiveButton("Download & install", (d, w) -> downloadAndInstallUpdate(pluginContext, url))
+                        .setPositiveButton("Download & install",
+                                (d, w) -> downloadAndInstallUpdate(pluginContext, uiContext, url))
                         .setNegativeButton("Later", null)
                         .show();
             } catch (Exception e) {
+                // Never fail silently: without a toast the button looks dead.
                 Log.e(TAG, "Failed to show update dialog", e);
+                Toast.makeText(pluginContext,
+                        "Update " + latestVersion + " is available, but the prompt could not be shown. "
+                                + "Install it from the plugin's GitHub releases page.",
+                        Toast.LENGTH_LONG).show();
             }
         } else {
             Toast.makeText(pluginContext, "You're on the latest version (" + installed + ")",
@@ -173,9 +195,9 @@ public final class DeflockPluginUpdater {
      * Download the APK via DownloadManager; tapping the completion notification
      * hands it to the system installer.
      */
-    private static void downloadAndInstallUpdate(Context pluginContext, String apkUrl) {
+    private static void downloadAndInstallUpdate(Context pluginContext, Context uiContext, String apkUrl) {
         try {
-            Context ctx = MapView.getMapView() != null ? MapView.getMapView().getContext() : pluginContext;
+            Context ctx = resolveUiContext(uiContext, pluginContext);
             android.app.DownloadManager dm =
                     (android.app.DownloadManager) ctx.getSystemService(Context.DOWNLOAD_SERVICE);
             android.app.DownloadManager.Request req =

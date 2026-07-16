@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Deflock</string>
     <string name="app_desc">ALPR camera locations on the map</string>
-    <string name="version_label">v1.3.0</string>
+    <string name="version_label">v1.3.1</string>
 
     <string name="preferences_title">Deflock Settings</string>
     <string name="preferences_summary">Configure Deflock ALPR plugin</string>

@@ -141,7 +141,9 @@ public class DeflockPlugin implements IPlugin {
             btnUpdate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DeflockPluginUpdater.checkForUpdate(pluginContext);
+                    MapView mv = MapView.getMapView();
+                    DeflockPluginUpdater.checkForUpdate(pluginContext,
+                            mv != null ? mv.getContext() : null);
                 }
             });
         }

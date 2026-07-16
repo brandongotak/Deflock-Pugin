@@ -26,7 +26,9 @@ public class DeflockPreferencesFragment extends PluginPreferenceFragment {
                 Context ctx = pluginContext != null
                         ? pluginContext
                         : MapView.getMapView().getContext();
-                DeflockPluginUpdater.checkForUpdate(ctx);
+                // getActivity() is the settings screen we're running in — the dialog must
+                // attach to it, not to the backgrounded map activity.
+                DeflockPluginUpdater.checkForUpdate(ctx, getActivity());
                 return true;
             });
         }
