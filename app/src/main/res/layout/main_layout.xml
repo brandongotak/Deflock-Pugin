@@ -30,6 +30,19 @@
             android:layout_height="wrap_content"
             android:textColor="#888888"
             android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_check_update"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:minWidth="0dp"
+            android:text="@string/btn_check_update"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="#444444" />
     </LinearLayout>
 
     <!-- Status bar -->

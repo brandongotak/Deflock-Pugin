@@ -136,6 +136,16 @@ public class DeflockPlugin implements IPlugin {
         TextView tvVersion = root.findViewById(R.id.tv_version);
         if (tvVersion != null) tvVersion.setText("v" + BuildConfig.PLUGIN_VERSION);
 
+        View btnUpdate = root.findViewById(R.id.btn_check_update);
+        if (btnUpdate != null) {
+            btnUpdate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DeflockPluginUpdater.checkForUpdate(pluginContext);
+                }
+            });
+        }
+
         RecyclerView rv = root.findViewById(R.id.recycler_alprs);
         rv.setLayoutManager(new LinearLayoutManager(MapView.getMapView().getContext()));
         adapter = new DeflockAdapter();
